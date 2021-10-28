@@ -1,5 +1,5 @@
 import routes from "../routes";
-import BaseBox from "../components/shared";
+import BaseBox from "../components/SharedStyles";
 import {
   faFacebookSquare,
   faInstagram,
@@ -14,19 +14,20 @@ import Separator from "../components/auth/Separator";
 import Input from "../components/auth/Input";
 import FormBox from "../components/auth/FormBox";
 import BottomBox from "../components/auth/BottomBox";
+import PageTitle from "../components/PageTitle";
 
 const Title = styled.h1`
   color: ${(props) => props.theme.fontColor};
 `;
 
 const Subtitle = styled.h3`
-font-weight: 600;
-font-size: 12px;
-color: #8e8e8e;
-text-align: center;
-margin-top: 15px;
-margin-bottom: 10px;
-line-height: 18px;
+  font-weight: 600;
+  font-size: 12px;
+  color: #8e8e8e;
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  line-height: 18px;
 `;
 
 const FacebookLogin = styled.div`
@@ -44,6 +45,7 @@ const FacebookLogin = styled.div`
 function SignUp() {
   return (
     <AuthLayout>
+      <PageTitle title="Sign up" />
       <FormBox>
         <FontAwesomeIcon icon={faInstagram} size="3x" />
         <Subtitle>Sign up to see photos and videos from your friends.</Subtitle>
@@ -57,11 +59,7 @@ function SignUp() {
           <Button type="submit" value="Sign up" />
         </form>
       </FormBox>
-      <BottomBox
-        cta="Have an account?"
-        link={routes.home}
-        linkText="Log in"
-      />
+      <BottomBox cta="Have an account?" link={routes.home} linkText="Log in" />
     </AuthLayout>
   );
 }

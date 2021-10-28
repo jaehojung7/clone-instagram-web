@@ -1,20 +1,16 @@
 import styled from "styled-components";
 
-const StyledButton = styled.input`
-  background-color: ${(props) => props.theme.accent};
-  text-align: center;
-  color: white;
-  margin-top: 5px;
-  padding: 6px 0px;
+const Button = styled.input`
   border: none;
   border-radius: 3px;
-  font-size: 12 px;
+  margin-top: 12px;
+  background-color: ${(props) => props.theme.accent};
+  color: white;
+  text-align: center;
+  padding: 8px 0px;
   font-weight: 600;
   width: 100%;
+  opacity: ${(props) => (props.disabled ? "0.4" : "1")};
 `;
-
-function Button(props) {
-  return <StyledButton {...props} />;
-}
 
 export default Button;

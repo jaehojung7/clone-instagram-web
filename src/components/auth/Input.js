@@ -1,21 +1,19 @@
 import styled from "styled-components";
 
-const StyledInput = styled.input`
+const Input = styled.input`
   width: 100%;
-  margin-bottom: 7px;
-  padding: 5px 15px;
-  background-color: #fafafa;
   border-radius: 3px;
-  border: 1px solid rgb(219, 219, 219);
+  padding: 7px;
+  background-color: #fafafa;
+  border: 0.5px solid ${(props) => props.hasError ? "tomato" : props.theme.borderColor};
+  margin-top: 5px;
   box-sizing: border-box;
   &::placeholder {
-    font-size: 10px;
-    font-weight: 600;
+    font-size: 12px;
+  }
+  &:focus {
+    border-color: rgb(38, 38, 38);
   }
 `;
-
-function Input(props) {
-    return <StyledInput {...props} />;
-}
 
 export default Input;
