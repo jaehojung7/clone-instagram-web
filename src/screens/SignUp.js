@@ -19,6 +19,16 @@ const Title = styled.h1`
   color: ${(props) => props.theme.fontColor};
 `;
 
+const Subtitle = styled.h3`
+font-weight: 600;
+font-size: 12px;
+color: #8e8e8e;
+text-align: center;
+margin-top: 15px;
+margin-bottom: 10px;
+line-height: 18px;
+`;
+
 const FacebookLogin = styled.div`
   display: flex;
   align-items: center;
@@ -31,46 +41,29 @@ const FacebookLogin = styled.div`
   }
 `;
 
-const ForgotPassword = styled.div`
-  a {
-    color: #385285;
-    font-size: 8px;
-  }
-`;
-
-const Gap = styled.div`
-  height: 30px;
-`;
-
-function Login() {
+function SignUp() {
   return (
     <AuthLayout>
       <FormBox>
-        <span>
-          <FontAwesomeIcon icon={faInstagram} size="3x" />
-        </span>
-        <Gap></Gap>
-        <form>
-          <Input type="text" placeholder="Phone number, username, or email" />
-          <Input type="password" placeholder="Password" />
-          <Button type="submit" value="Log In" />
-        </form>
+        <FontAwesomeIcon icon={faInstagram} size="3x" />
+        <Subtitle>Sign up to see photos and videos from your friends.</Subtitle>
+        <Button type="submit" value="Log in with Facebook" />
         <Separator />
-        <FacebookLogin>
-          <FontAwesomeIcon icon={faFacebookSquare} />
-          <a href="#">Log in with Facebook</a>
-        </FacebookLogin>
-        <ForgotPassword>
-          <a href="#">Forgot Password?</a>
-        </ForgotPassword>
+        <form>
+          <Input type="text" placeholder="Mobile number or Email" />
+          <Input type="text" placeholder="Full Name" />
+          <Input type="text" placeholder="Username" />
+          <Input type="password" placeholder="Password" />
+          <Button type="submit" value="Sign up" />
+        </form>
       </FormBox>
       <BottomBox
-        cta="Don't have an account?"
-        link={routes.signUp}
-        linkText="Sign up"
+        cta="Have an account?"
+        link={routes.home}
+        linkText="Log in"
       />
     </AuthLayout>
   );
 }
 
-export default Login;
+export default SignUp;

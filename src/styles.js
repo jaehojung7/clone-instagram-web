@@ -2,18 +2,34 @@ import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 
 export const lightTheme = {
-  fontColor: "#2c2c2c",
-  bgColor: "beige",
+  accent: "#0496f6",
+  borderColor: "rgb(219,219,219)",
 };
 
 export const darkTheme = {
-  fontColor: "beige",
+  fontColor: "white",
   bgColor: "#2c2c2c",
 };
 
 export const GlobalStyles = createGlobalStyle`
   ${reset}
+  input {
+    all: unset;
+  };
+  * {
+    box-sizing: border-box;
+  };
+
   body {
-    background-color: ${(props) => props.theme.bgColor};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 11px;
+    color: rgb(38,38,38);
+    background-color: #fafafa;
+    font-family: "Open Sans", sans-serif;
+  }
+  a {
+    text-decoration: none;
   }
 `;
