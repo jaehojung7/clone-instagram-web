@@ -1,62 +1,142 @@
+import routes from "../routes";
+import BaseBox from "../components/SharedStyles";
+import {
+  faFacebookSquare,
+  faInstagram,
+} from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import { darkModeVar, isLoggedInVar } from "../Apollo";
+import AuthLayout from "../components/auth/AuthLayout";
+import Button from "../components/auth/Button";
+import Separator from "../components/auth/Separator";
+import Input from "../components/auth/Input";
+import FormBox from "../components/auth/FormBox";
+import BottomBox from "../components/auth/BottomBox";
+import PageTitle from "../components/PageTitle";
+import { useForm } from "react-hook-form";
+import FormError from "../components/auth/FormError";
+import { gql, useMutation } from "@apollo/client";
 
 const Title = styled.h1`
   color: ${(props) => props.theme.fontColor};
 `;
 
-const Container = styled.div`
+const FacebookLogin = styled.div`
   display: flex;
-  height: 100vh;
-  justify-content: center;
   align-items: center;
-  flex-direction: column;
-`;
-
-const WhiteBox = styled.div`
-  background-color: white;
-  border: 1px solid rgb(219, 219, 219);
-`;
-
-const TopBox = styled(WhiteBox)`
-  display: flex;
-  justify-content: content;
-  align-items: center;
-  flex-direction: column;
-  form {
-    display: flex;
-    justify-content: content;
-    align-items: center;
-    flex-direction: column;
+  color: #385285;
+  margin-bottom: 15px;
+  a {
+    color: #385285;
+    margin-left: 7px;
+    font-weight: 600;
   }
 `;
 
-const BottomBox = styled(WhiteBox)`
-  padding: 10px 0px;
-  text-align: center;
+const ForgotPassword = styled.div`
+  a {
+    color: #385285;
+    font-size: 8px;
+  }
 `;
 
+const Gap = styled.div`
+  height: 30px;
+`;
+
+const LOGIN_MUTATION = gql`
+  mutation login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      ok
+      token
+      error
+    }
+  }
+`;
 function Login() {
+  const { register, handleSubmit, formState, getValues, setError } = useForm({
+    mode: "onChange",
+  });
+  const onCompleted = (data) => {
+    const {
+      login: { ok, error, token },
+    } = data;
+    if (!ok) {
+      setError("result", {
+        message: error,
+      });
+    }
+  };
+
+  const [login, { loading }] = useMutation(LOGIN_MUTATION, {
+    onCompleted,
+  });
+  const onSubmitValid = (data) => {
+    if (loading) {
+      return;
+    }
+    const { username, password } = getValues();
+    login({
+      variables: { username, password },
+    });
+  };
+
   return (
-    <Container>
-      <div>
-        <TopBox>
-          <h1>Instagram</h1>
-          <form>
-            <input type="text" placeholder="Username" />
-            <input type="password" placeholder="Password" />
-            <input type="submit" placeholder="Log In" />
-          </form>
-          <span>Or</span>
-          <span>Log In with Facebook</span>
-        </TopBox>
-        <BottomBox>
-          <span>
-            Don't have an account? <a href="#">Sign up</a>
-          </span>
-        </BottomBox>
-      </div>
-    </Container>
+    <AuthLayout>
+      <PageTitle title="Login" />
+      <FormBox>
+        <div>
+          <FontAwesomeIcon icon={faInstagram} size="3x" />
+        </div>
+        <Gap></Gap>
+        <form onSubmit={handleSubmit(onSubmitValid)}>
+          <Input
+            // No ref prop for react-hook-form v7.0.0 or above
+            {...register("username", {
+              required: "Username is required",
+              minLength: {
+                value: 5,
+                message: "Minimum length of username is 5.",
+              },
+            })}
+            type="text"
+            placeholder="Username"
+            hasError={Boolean(formState.errors?.username?.message)}
+          />
+          <Input
+            {...register("password", {
+              required: "Password is required.",
+            })}
+            type="password"
+            placeholder="Password"
+            hasError={Boolean(formState.errors?.password?.message)}
+          />
+          <FormError message={formState.errors?.username?.message} />
+          <FormError message={formState.errors?.password?.message} />
+          <FormError message={formState.errors?.result?.message} />
+          <Button
+            type="submit"
+            value={loading ? "Loading..." : "Log in"}
+            disabled={!formState.isValid || loading}
+          />
+        </form>
+        <Separator />
+        <FacebookLogin>
+          <FontAwesomeIcon icon={faFacebookSquare} />
+          <a href="#">Log in with Facebook</a>
+        </FacebookLogin>
+        <ForgotPassword>
+          <a href="#">Forgot Password?</a>
+        </ForgotPassword>
+      </FormBox>
+      <BottomBox
+        cta="Don't have an account?"
+        link={routes.signUp}
+        linkText="Sign up"
+      />
+    </AuthLayout>
   );
 }
 
