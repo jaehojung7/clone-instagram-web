@@ -1,5 +1,12 @@
+import { logUserOut } from "../Apollo";
+
 function Home() {
-  return <h1>Home</h1>;
+  return (
+    <div>
+      <h1>Welcome!</h1>
+      <button onClick={() => logUserOut()}>Log out now!</button>
+    </div>
+  );
 }
 
 export default Home;

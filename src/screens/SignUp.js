@@ -1,13 +1,7 @@
 import routes from "../routes";
-import BaseBox from "../components/SharedStyles";
-import {
-  faFacebookSquare,
-  faInstagram,
-} from "@fortawesome/free-brands-svg-icons";
+import { faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-import { darkModeVar, isLoggedInVar } from "../Apollo";
 import AuthLayout from "../components/auth/AuthLayout";
 import Button from "../components/auth/Button";
 import Separator from "../components/auth/Separator";

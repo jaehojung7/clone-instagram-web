@@ -1,13 +1,11 @@
 import routes from "../routes";
-import BaseBox from "../components/SharedStyles";
 import {
   faFacebookSquare,
   faInstagram,
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-import { darkModeVar, isLoggedInVar } from "../Apollo";
+import { logUserIn } from "../Apollo";
 import AuthLayout from "../components/auth/AuthLayout";
 import Button from "../components/auth/Button";
 import Separator from "../components/auth/Separator";
@@ -56,7 +54,14 @@ const LOGIN_MUTATION = gql`
   }
 `;
 function Login() {
-  const { register, handleSubmit, formState, getValues, setError } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState,
+    getValues,
+    setError,
+    clearErrors,
+  } = useForm({
     mode: "onChange",
   });
   const onCompleted = (data) => {
@@ -67,6 +72,9 @@ function Login() {
       setError("result", {
         message: error,
       });
+    }
+    if (token) {
+      logUserIn(token);
     }
   };
 
@@ -81,6 +89,10 @@ function Login() {
     login({
       variables: { username, password },
     });
+  };
+
+  const clearLoginErrors = () => {
+    clearErrors("result");
   };
 
   return (
@@ -101,6 +113,7 @@ function Login() {
                 message: "Minimum length of username is 5.",
               },
             })}
+            onChange={clearLoginErrors}
             type="text"
             placeholder="Username"
             hasError={Boolean(formState.errors?.username?.message)}
