@@ -9,6 +9,9 @@ import Input from "../components/auth/Input";
 import FormBox from "../components/auth/FormBox";
 import BottomBox from "../components/auth/BottomBox";
 import PageTitle from "../components/PageTitle";
+import { useForm } from "react-hook-form";
+import { gql, useMutation } from "@apollo/client";
+import { useHistory } from "react-router";
 
 const Title = styled.h1`
   color: ${(props) => props.theme.fontColor};
@@ -36,7 +39,59 @@ const FacebookLogin = styled.div`
   }
 `;
 
+const CREATE_ACCOUNT_MUTATION = gql`
+  mutation createAccount(
+    $firstName: String!
+    $lastName: String
+    $username: String!
+    $email: String!
+    $password: String!
+  ) {
+    createAccount(
+      firstName: $firstName
+      lastName: $lastName
+      username: $username
+      email: $email
+      password: $password
+    ) {
+      ok
+      error
+    }
+  }
+`;
+
 function SignUp() {
+  const history = useHistory();
+  const onCompleted = (data) => {
+    const { username, password } = getValues();
+    const {
+      createAccount: { ok, error },
+    } = data;
+    if (!ok) {
+      return;
+    }
+    history.push(routes.home, {
+      message: "Account created. Please log in.",
+      username,
+      password,
+    });
+  };
+  const [createAccount, { loading }] = useMutation(CREATE_ACCOUNT_MUTATION, {
+    onCompleted,
+  });
+  const { register, handleSubmit, formState, getValues } = useForm({
+    mode: "onChange",
+  });
+  const onSubmitValid = (data) => {
+    if (loading) {
+      return;
+    }
+    createAccount({
+      variables: {
+        ...data,
+      },
+    });
+  };
   return (
     <AuthLayout>
       <PageTitle title="Sign up" />
@@ -45,12 +100,47 @@ function SignUp() {
         <Subtitle>Sign up to see photos and videos from your friends.</Subtitle>
         <Button type="submit" value="Log in with Facebook" />
         <Separator />
-        <form>
-          <Input type="text" placeholder="Mobile number or Email" />
-          <Input type="text" placeholder="Full Name" />
-          <Input type="text" placeholder="Username" />
-          <Input type="password" placeholder="Password" />
-          <Button type="submit" value="Sign up" />
+        <form onSubmit={handleSubmit(onSubmitValid)}>
+          <Input
+            {...register("firstName", {
+              required: "First name is required.",
+            })}
+            type="text"
+            placeholder="First Name"
+          />
+          <Input
+            {...register("lastName", {
+              required: "Last name is required.",
+            })}
+            type="text"
+            placeholder="Last Name"
+          />
+          <Input
+            {...register("email", {
+              required: "Email is required.",
+            })}
+            type="text"
+            placeholder="Email"
+          />
+          <Input
+            {...register("username", {
+              required: "Username is required.",
+            })}
+            type="text"
+            placeholder="Username"
+          />
+          <Input
+            {...register("password", {
+              required: "Password is required.",
+            })}
+            type="password"
+            placeholder="Password"
+          />
+          <Button
+            type="submit"
+            value={loading ? "Loading..." : "Sign Up"}
+            disabled={!formState.isValid || loading}
+          />
         </form>
       </FormBox>
       <BottomBox cta="Have an account?" link={routes.home} linkText="Log in" />
