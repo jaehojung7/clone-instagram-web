@@ -16,6 +16,7 @@ import PageTitle from "../components/PageTitle";
 import { useForm } from "react-hook-form";
 import FormError from "../components/auth/FormError";
 import { gql, useMutation } from "@apollo/client";
+import { useLocation } from "react-router";
 
 const Title = styled.h1`
   color: ${(props) => props.theme.fontColor};
@@ -41,7 +42,12 @@ const ForgotPassword = styled.div`
 `;
 
 const Gap = styled.div`
-  height: 30px;
+  height: 15px;
+`;
+
+const Notification = styled.div`
+  margin: 10px 0 10px 0;
+  color: #2ecc71;
 `;
 
 const LOGIN_MUTATION = gql`
@@ -54,6 +60,8 @@ const LOGIN_MUTATION = gql`
   }
 `;
 function Login() {
+  const location = useLocation();
+  console.log(location);
   const {
     register,
     handleSubmit,
@@ -63,6 +71,11 @@ function Login() {
     clearErrors,
   } = useForm({
     mode: "onChange",
+    defaultValues: {
+      // username, password should equal to React Hook Form input register(name): line 122
+      username: location?.state?.username || "",
+      password: location?.state?.password || ""
+    }
   });
   const onCompleted = (data) => {
     const {
@@ -102,7 +115,7 @@ function Login() {
         <div>
           <FontAwesomeIcon icon={faInstagram} size="3x" />
         </div>
-        <Gap></Gap>
+        <Notification>{location?.state?.message}</Notification>
         <form onSubmit={handleSubmit(onSubmitValid)}>
           <Input
             // No ref prop for react-hook-form v7.0.0 or above
