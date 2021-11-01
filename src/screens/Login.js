@@ -18,10 +18,6 @@ import FormError from "../components/auth/FormError";
 import { gql, useMutation } from "@apollo/client";
 import { useLocation } from "react-router";
 
-const Title = styled.h1`
-  color: ${(props) => props.theme.fontColor};
-`;
-
 const FacebookLogin = styled.div`
   display: flex;
   align-items: center;
@@ -72,10 +68,10 @@ function Login() {
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      // username, password should equal to React Hook Form input register(name): line 122
+      // username, password should match the input field names of React Hook Form registers
       username: location?.state?.username || "",
-      password: location?.state?.password || ""
-    }
+      password: location?.state?.password || "",
+    },
   });
   const onCompleted = (data) => {
     const {

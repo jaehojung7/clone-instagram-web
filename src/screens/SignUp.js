@@ -1,5 +1,8 @@
 import routes from "../routes";
-import { faInstagram } from "@fortawesome/free-brands-svg-icons";
+import {
+  faFacebookSquare,
+  faInstagram,
+} from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import AuthLayout from "../components/auth/AuthLayout";
@@ -13,10 +16,6 @@ import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
 import { useHistory } from "react-router";
 
-const Title = styled.h1`
-  color: ${(props) => props.theme.fontColor};
-`;
-
 const Subtitle = styled.h3`
   font-weight: 600;
   font-size: 12px;
@@ -27,15 +26,21 @@ const Subtitle = styled.h3`
   line-height: 18px;
 `;
 
-const FacebookLogin = styled.div`
+const FacebookLoginButton = styled.a`
   display: flex;
   align-items: center;
-  color: #385285;
-  margin-bottom: 15px;
-  a {
-    color: #385285;
-    margin-left: 7px;
-    font-weight: 600;
+  justify-content: center;
+  border: none;
+  border-radius: 3px;
+  margin-top: 12px;
+  background-color: ${(props) => props.theme.accent};
+  color: white;
+  text-align: center;
+  padding: 8px 0px;
+  font-weight: 600;
+  width: 100%;
+  span {
+    margin-left: 5px;
   }
 `;
 
@@ -98,7 +103,10 @@ function SignUp() {
       <FormBox>
         <FontAwesomeIcon icon={faInstagram} size="3x" />
         <Subtitle>Sign up to see photos and videos from your friends.</Subtitle>
-        <Button type="submit" value="Log in with Facebook" />
+        <FacebookLoginButton href="#">
+          <FontAwesomeIcon icon={faFacebookSquare} />
+          <span>Log in with Facebook</span>
+        </FacebookLoginButton>
         <Separator />
         <form onSubmit={handleSubmit(onSubmitValid)}>
           <Input
