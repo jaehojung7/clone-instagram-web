@@ -24,9 +24,6 @@ export const GlobalStyles = createGlobalStyle`
   };
 
   body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     font-size: 11px;
     color: ${(props) => props.theme.fontColor};
     background-color: ${(props) => props.theme.bgColor};

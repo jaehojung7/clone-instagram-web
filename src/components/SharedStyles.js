@@ -7,3 +7,7 @@ export const BaseBox = styled.div`
 `;
 
 export default BaseBox;
+
+export const boldText = styled.span`
+  font-weight: 600;
+`;
