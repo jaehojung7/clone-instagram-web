@@ -45,6 +45,7 @@ const FacebookLoginButton = styled.a`
 `;
 
 const CREATE_ACCOUNT_MUTATION = gql`
+# Frontend mutation
   mutation createAccount(
     $firstName: String!
     $lastName: String
@@ -52,6 +53,7 @@ const CREATE_ACCOUNT_MUTATION = gql`
     $email: String!
     $password: String!
   ) {
+    # Backend mutation
     createAccount(
       firstName: $firstName
       lastName: $lastName

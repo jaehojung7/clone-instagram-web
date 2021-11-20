@@ -6,6 +6,8 @@ import {
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 
+import { makeVar } from "@apollo/client";
+
 const TOKEN = "TOKEN";
 const DARK_MODE = "DARK_MODE";
 

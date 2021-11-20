@@ -11,6 +11,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import Avatar from "../Avatar";
 import { boldText } from "../SharedStyles";
+import Comments from "./Comments";
 
 const TOGGLE_LIKE_MUTATION = gql`
   mutation toggleLike($id: Int!) {
@@ -71,26 +72,16 @@ const Likes = styled(boldText)`
   display: block;
 `;
 
-const Comments = styled.div`
-  margin-top: 15px;
-`;
-const Comment = styled.div``;
-
-const CommentCaption = styled.span`
-  margin-left: 7px;
-`;
-
-const CommentCount = styled.span`
-  opacity: 0.7;
-  margin: 10px 0px;
-  display: block;
-  font-weight: 600;
-  font-size: 10px;
-`;
-
-
-
-function Photo({ id, user, file, isLiked, likes, caption, commentNumber, comments }) {
+function Photo({
+  id,
+  user,
+  file,
+  isLiked,
+  likes,
+  caption,
+  commentNumber,
+  comments,
+}) {
   const updateToggleLike = (cache, result) => {
     const {
       data: {
@@ -98,28 +89,21 @@ function Photo({ id, user, file, isLiked, likes, caption, commentNumber, comment
       },
     } = result;
     if (ok) {
-      const fragmentId = `Photo:${id}`;
-      const fragment = gql`
-        fragment BSName on Photo {
-          isLiked
-          likes
-        }
-      `;
-      const result = cache.readFragment({
-        id: fragmentId,
-        fragment,
-      });
-      if ("isLiked" in result && "likes" in result) {
-        const { isLiked: cacheIsLiked, likes: cacheLikes } = result;
-        cache.writeFragment({
-          id: fragmentId,
-          fragment,
-          data: {
-            isLiked: !cacheIsLiked,
-            likes: cacheIsLiked ? cacheLikes - 1 : cacheLikes + 1,
+      const photoId = `Photo:${id}`;
+      cache.modify({
+        id: photoId,
+        fields: {
+          isLiked(prev) {
+            return !prev;
           },
-        });
-      }
+          likes(prev) {
+            if (isLiked) {
+              return prev - 1;
+            }
+            return prev + 1;
+          },
+        },
+      });
     }
   };
   const [toggleLikeMutation] = useMutation(TOGGLE_LIKE_MUTATION, {
@@ -156,15 +140,13 @@ function Photo({ id, user, file, isLiked, likes, caption, commentNumber, comment
           </div>
         </PhotoActions>
         <Likes>{likes === 1 ? "1 like" : `${likes} likes`}</Likes>
-        <Comments>
-          <Comment>
-            <boldText>{user.username}</boldText>
-            <CommentCaption>{caption}</CommentCaption>
-          </Comment>
-          <CommentCount>
-            {commentNumber === 1 ? "1 comment" : `${commentNumber} comments`}
-          </CommentCount>
-        </Comments>
+        <Comments
+          photoId={id}
+          author={user.username}
+          caption={caption}
+          commentNumber={commentNumber}
+          comments={comments}
+        />
       </PhotoData>
     </PhotoContainer>
   );
@@ -181,8 +163,5 @@ Photo.propTypes = {
   likes: PropTypes.number.isRequired,
   caption: PropTypes.string,
   commentNumber: PropTypes.number.isRequired,
-  comments: PropTypes.arrayOf(PropTypes.shape({
-
-  }))
 };
 export default Photo;
