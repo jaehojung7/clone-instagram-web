@@ -6,8 +6,8 @@ import { gql, useMutation } from "@apollo/client";
 import useUser from "../../hooks/useUser";
 
 const CREATE_COMMENT_MUTATION = gql`
-  mutation createComment($photoId: Int!, $payload: String!) {
-    createComment(photoId:$photoId, payload:$payload) {
+  mutation createComment($photoId: Int!, $text: String!) {
+    createComment(photoId:$photoId, text:$text) {
       ok
       error
       id
@@ -44,8 +44,8 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
   const { data: userData } = useUser();
   const { register, handleSubmit, setValue, getValues } = useForm();
   const createCommentUpdate = (cache, result) => {
-    const { payload } = getValues();
-    setValue("payload", "");
+    const { text } = getValues();
+    setValue("text", "");
     const {
       data: {
         createComment: { ok, id },
@@ -57,7 +57,7 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
         createdAt: Date.now() + "",
         id,
         isMine: true,
-        payload,
+        text,
         user: {
           ...userData.me,
         },
@@ -69,7 +69,7 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
             id
             createdAt
             isMine
-            payload
+            text
             user {
               username
               avatar
@@ -97,20 +97,20 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
     }
   );
   const onValid = (data) => {
-    const { payload } = data;
+    const { text } = data;
     if (loading) {
       return;
     }
     createCommentMutation({
       variables: {
         photoId,
-        payload,
+        text,
       },
     });
   };
   return (
     <CommentsContainer>
-      <Comment author={author} payload={caption} />
+      <Comment author={author} text={caption} />
       <CommentCount>
         {commentNumber === 1 ? "1 comment" : `${commentNumber} comments`}
       </CommentCount>
@@ -118,14 +118,14 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
         <Comment
           key={comment.id}
           author={comment.user.username}
-          payload={comment.payload}
+          text={comment.text}
         />
       ))}
       <PostCommentContainer>
         <form onSubmit={handleSubmit(onValid)}>
           <PostCommentInput
             // React Hook Form ver.7: <input {...register("name", { required: true })} />
-            {...register("payload", { required: true })}
+            {...register("text", { required: true })}
             type="text"
             placeholder="Write a comment..."
           />
@@ -147,7 +147,7 @@ Comments.propTypes = {
         avatar: PropTypes.string,
         username: PropTypes.string.isRequired,
       }),
-      payload: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired,
       isMine: PropTypes.bool.isRequired,
       createdAt: PropTypes.string.isRequired,
     })

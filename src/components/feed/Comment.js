@@ -19,16 +19,16 @@ const CommentCaption = styled.span`
   }
 `;
 
-function Comment({ author, payload }) {
-  const sanitizedPayload = sanitizeHtml(
-    payload.replace(/#[\w]+/g, "<mark>$&</mark>"),
+function Comment({ author, text }) {
+  const sanitizedText = sanitizeHtml(
+    text.replace(/#[\w]+/g, "<mark>$&</mark>"),
     { allowedTags: ["mark"] }
   );
   return (
     <CommentContainer>
       <boldText>{author}</boldText>
       <CommentCaption>
-        {payload.split(" ").map((word, index) =>
+        {text.split(" ").map((word, index) =>
           /#[\w]+/.test(word) ? (
             <React.Fragment key={index}>
               <Link to={`/hashtags/${word}`}>{word}</Link>{" "}
@@ -44,7 +44,7 @@ function Comment({ author, payload }) {
 
 Comment.propTypes = {
   author: PropTypes.string.isRequired,
-  payload: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
 };
 
 export default Comment;

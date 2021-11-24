@@ -55,6 +55,7 @@ const LOGIN_MUTATION = gql`
     }
   }
 `;
+
 function Login() {
   const location = useLocation();
   console.log(location);
@@ -87,15 +88,16 @@ function Login() {
     }
   };
 
-  const [login, { loading }] = useMutation(LOGIN_MUTATION, {
+  const [loginFunction, { loading }] = useMutation(LOGIN_MUTATION, {
     onCompleted,
   });
+
   const onSubmitValid = (data) => {
     if (loading) {
       return;
     }
     const { username, password } = getValues();
-    login({
+    loginFunction({
       variables: { username, password },
     });
   };
