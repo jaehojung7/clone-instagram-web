@@ -1,19 +1,22 @@
 import styled from "styled-components";
 
+// Default avatar if user does not have a profile picture
 const StyledAvatar = styled.div`
-  width: ${(props) => (props.lg ? "35px" : "25px")};
-  height: ${(props) => (props.lg ? "35px" : "25px")};
-  border-radius: 50%;
-  background-color: "#2c2c2c";
+  width: 25px;
+  height: 25px;
+  border-radius: 15px;
+  background-color: darkgray;
   overflow: hidden;
 `;
 
-const Img = styled.img`
+const AvatarImage = styled.img`
   max-width: 100%;
 `;
 
-function Avatar({ url = "", lg = false }) {
-  return <StyledAvatar lg={lg}>{url !== "" ? <Img src={url} /> : null}</StyledAvatar>;
+function Avatar({ url = "", large = false }) {
+  return (
+    <StyledAvatar>{url !== "" ? <AvatarImage src={url} /> : null}</StyledAvatar>
+  );
 }
 
 export default Avatar;

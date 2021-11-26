@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import BaseBox from "../SharedStyles";
+import BaseBox from "../SharedComponents";
 
 const StyledFormBox = styled(BaseBox)`
   display: flex;

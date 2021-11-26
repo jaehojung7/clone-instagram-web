@@ -13,6 +13,16 @@ const FEED_QUERY = gql`
       file
       caption
       likes
+      comments {
+        id
+        user {
+          username
+          avatar
+        }
+        text
+        isMine
+        createdAt
+      }
       commentNumber
       createdAt
       isMine
@@ -22,7 +32,6 @@ const FEED_QUERY = gql`
 `;
 
 function Home() {
-  // useUser에도 같은 방식 쓰임
   const { data } = useQuery(FEED_QUERY);
   return (
     <div>

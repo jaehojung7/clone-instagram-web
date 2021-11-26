@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import BaseBox from "../SharedStyles";
+import BaseBox from "../SharedComponents";
 
 const StyledBottomBox = styled(BaseBox)`
   padding: 20px 0px;

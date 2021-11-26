@@ -17,17 +17,16 @@ export const darkTheme = {
 export const GlobalStyles = createGlobalStyle`
   ${reset}
   input {
-    all: unset;
-  };
+    all:unset;
+  }
   * {
-    box-sizing: border-box;
-  };
-
+    box-sizing:border-box;
+  }
   body {
-    font-size: 11px;
-    color: ${(props) => props.theme.fontColor};
-    background-color: ${(props) => props.theme.bgColor};
-    font-family: "Open Sans", sans-serif;
+      background-color:${(props) => props.theme.bgColor};
+      font-size:14px;
+      font-family:'Open Sans', sans-serif;
+      color:${(props) => props.theme.fontColor};
   }
   a {
     text-decoration: none;

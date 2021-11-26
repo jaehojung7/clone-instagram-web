@@ -2,33 +2,27 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import sanitizeHtml from "sanitize-html";
+import { FatText } from "../SharedComponents";
 
 const CommentContainer = styled.div`
-  boldText {
-    font-weight: 700;
-  }
+  margin-bottom: 7px;
 `;
+
 const CommentCaption = styled.span`
   margin-left: 10px;
-  mark {
+  a {
     background-color: inherit;
     color: ${(props) => props.theme.accent};
     cursor: pointer;
-    text-decoration: underline;
   }
 `;
 
-function Comment({ author, payload }) {
-  const sanitizedPayload = sanitizeHtml(
-    payload.replace(/#[\w]+/g, "<mark>$&</mark>"),
-    { allowedTags: ["mark"] }
-  );
+function Comment({ author, text }) {
   return (
     <CommentContainer>
-      <boldText>{author}</boldText>
+      <FatText>{author}</FatText>
       <CommentCaption>
-        {payload.split(" ").map((word, index) =>
+        {text.split(" ").map((word, index) =>
           /#[\w]+/.test(word) ? (
             <React.Fragment key={index}>
               <Link to={`/hashtags/${word}`}>{word}</Link>{" "}

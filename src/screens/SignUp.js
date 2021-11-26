@@ -1,4 +1,4 @@
-import routes from "../routes";
+import routes from "../Routes";
 import {
   faFacebookSquare,
   faInstagram,
@@ -15,6 +15,7 @@ import PageTitle from "../components/PageTitle";
 import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
 import { useHistory } from "react-router";
+import FormError from "../components/auth/FormError";
 
 const Subtitle = styled.h3`
   font-weight: 600;
@@ -45,7 +46,6 @@ const FacebookLoginButton = styled.a`
 `;
 
 const CREATE_ACCOUNT_MUTATION = gql`
-# Frontend mutation
   mutation createAccount(
     $firstName: String!
     $lastName: String
@@ -53,7 +53,6 @@ const CREATE_ACCOUNT_MUTATION = gql`
     $email: String!
     $password: String!
   ) {
-    # Backend mutation
     createAccount(
       firstName: $firstName
       lastName: $lastName
@@ -69,36 +68,56 @@ const CREATE_ACCOUNT_MUTATION = gql`
 
 function SignUp() {
   const history = useHistory();
+
+  // Here, data is what the mutation returns (ok, error)
   const onCompleted = (data) => {
-    const { username, password } = getValues();
+    const { username } = getValues();
     const {
       createAccount: { ok, error },
     } = data;
     if (!ok) {
-      return;
+      setError("result", {
+        message: error,
+      });
+    } else {
+      history.push(routes.home, {
+        message: "Account created. Please log in.",
+        username,
+      });
     }
-    history.push(routes.home, {
-      message: "Account created. Please log in.",
-      username,
-      password,
-    });
   };
-  const [createAccount, { loading }] = useMutation(CREATE_ACCOUNT_MUTATION, {
-    onCompleted,
-  });
-  const { register, handleSubmit, formState, getValues } = useForm({
+
+  const [createAccountFunction, { loading }] = useMutation(
+    CREATE_ACCOUNT_MUTATION,
+    {
+      onCompleted,
+    }
+  );
+
+  const { register, handleSubmit, formState, getValues, setError } = useForm({
     mode: "onChange",
   });
+
   const onSubmitValid = (data) => {
+    // Prevents createAccount function from working in case the user clicks the button twice
     if (loading) {
       return;
     }
-    createAccount({
+    // Alternative: skip getValues and createAccount({ ... data })
+    // In this case, we already know data contains all necessary fields if submission is valid
+    // However, manual fetching with getValues is safer in general
+    const { firstName, lastName, username, email, password } = getValues();
+    createAccountFunction({
       variables: {
-        ...data,
+        firstName,
+        lastName,
+        username,
+        email,
+        password,
       },
     });
   };
+
   return (
     <AuthLayout>
       <PageTitle title="Sign up" />
@@ -117,11 +136,10 @@ function SignUp() {
             })}
             type="text"
             placeholder="First Name"
+            hasError={Boolean(formState.errors?.firstName?.message)}
           />
           <Input
-            {...register("lastName", {
-              required: "Last name is required.",
-            })}
+            {...register("lastName")}
             type="text"
             placeholder="Last Name"
           />
@@ -131,6 +149,7 @@ function SignUp() {
             })}
             type="text"
             placeholder="Email"
+            hasError={Boolean(formState.errors?.email?.message)}
           />
           <Input
             {...register("username", {
@@ -138,6 +157,7 @@ function SignUp() {
             })}
             type="text"
             placeholder="Username"
+            hasError={Boolean(formState.errors?.username?.message)}
           />
           <Input
             {...register("password", {
@@ -145,7 +165,13 @@ function SignUp() {
             })}
             type="password"
             placeholder="Password"
+            hasError={Boolean(formState.errors?.password?.message)}
           />
+          <FormError message={formState.errors?.firstName?.message} />
+          <FormError message={formState.errors?.email?.message} />
+          <FormError message={formState.errors?.username?.message} />
+          <FormError message={formState.errors?.password?.message} />
+          <FormError message={formState.errors?.result?.message} />
           <Button
             type="submit"
             value={loading ? "Loading..." : "Sign Up"}

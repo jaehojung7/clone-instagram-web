@@ -1,4 +1,4 @@
-import routes from "../routes";
+import routes from "../Routes";
 import {
   faFacebookSquare,
   faInstagram,
@@ -37,10 +37,6 @@ const ForgotPassword = styled.div`
   }
 `;
 
-const Gap = styled.div`
-  height: 15px;
-`;
-
 const Notification = styled.div`
   margin: 10px 0 10px 0;
   color: #2ecc71;
@@ -57,8 +53,9 @@ const LOGIN_MUTATION = gql`
 `;
 
 function Login() {
+  // Receive message and states from history.push after successful sign-up
   const location = useLocation();
-  console.log(location);
+
   const {
     register,
     handleSubmit,
@@ -69,11 +66,12 @@ function Login() {
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      // username, password should match the input field names of React Hook Form registers
+      // Use username and password states received from history.push on sign-up page
       username: location?.state?.username || "",
-      password: location?.state?.password || "",
     },
   });
+
+  // Here, data is what the mutation returns (ok, error, token)
   const onCompleted = (data) => {
     const {
       login: { ok, error, token },
@@ -88,14 +86,18 @@ function Login() {
     }
   };
 
+  // [mutateFunction, { data, loading, error }]
+  // mutateFunction should be called to execute the defined mutation
   const [loginFunction, { loading }] = useMutation(LOGIN_MUTATION, {
     onCompleted,
   });
 
-  const onSubmitValid = (data) => {
+  const onSubmitValid = (submissionData) => {
+    // Prevents login function from working in case the user clicks the button twice
     if (loading) {
       return;
     }
+    // "const { username, password } = submissionData;" is also possible
     const { username, password } = getValues();
     loginFunction({
       variables: { username, password },
@@ -113,7 +115,9 @@ function Login() {
         <div>
           <FontAwesomeIcon icon={faInstagram} size="3x" />
         </div>
+
         <Notification>{location?.state?.message}</Notification>
+
         <form onSubmit={handleSubmit(onSubmitValid)}>
           <Input
             // No ref prop for react-hook-form v7.0.0 or above
@@ -127,7 +131,7 @@ function Login() {
             onChange={clearLoginErrors}
             type="text"
             placeholder="Username"
-            hasError={Boolean(formState.errors?.username?.message)}
+            hasError={Boolean(formState.errors?.username?.message)} // Custom prop that we use to change border color
           />
           <Input
             {...register("password", {
@@ -149,10 +153,10 @@ function Login() {
         <Separator />
         <FacebookLogin>
           <FontAwesomeIcon icon={faFacebookSquare} />
-          <a href="#">Log in with Facebook</a>
+          <a href={routes.home}>Log in with Facebook</a>
         </FacebookLogin>
         <ForgotPassword>
-          <a href="#">Forgot Password?</a>
+          <a href={routes.home}>Forgot Password?</a>
         </ForgotPassword>
       </FormBox>
       <BottomBox

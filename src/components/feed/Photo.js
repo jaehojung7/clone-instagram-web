@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import Avatar from "../Avatar";
-import { boldText } from "../SharedStyles";
+import { FatText } from "../SharedComponents";
 import Comments from "./Comments";
 
 const TOGGLE_LIKE_MUTATION = gql`
@@ -36,7 +36,7 @@ const PhotoHeader = styled.div`
   border-bottom: 1px solid rgb(239, 239, 239);
 `;
 
-const Username = styled(boldText)`
+const Username = styled(FatText)`
   margin-left: 15px;
 `;
 
@@ -67,7 +67,7 @@ const PhotoAction = styled.div`
   cursor: pointer;
 `;
 
-const Likes = styled(boldText)`
+const Likes = styled(FatText)`
   margin-top: 15px;
   display: block;
 `;
@@ -106,7 +106,7 @@ function Photo({
       });
     }
   };
-  const [toggleLikeMutation] = useMutation(TOGGLE_LIKE_MUTATION, {
+  const [toggleLikeFunction] = useMutation(TOGGLE_LIKE_MUTATION, {
     variables: {
       id,
     },
@@ -115,14 +115,14 @@ function Photo({
   return (
     <PhotoContainer key={id}>
       <PhotoHeader>
-        <Avatar lg url={user.avatar} />
+        <Avatar large url={user.avatar} />
         <Username>{user.username}</Username>
       </PhotoHeader>
       <PhotoFile src={file} />
       <PhotoData>
         <PhotoActions>
           <div>
-            <PhotoAction onClick={toggleLikeMutation}>
+            <PhotoAction onClick={toggleLikeFunction}>
               <FontAwesomeIcon
                 style={{ color: isLiked ? "tomato" : "inherit" }}
                 icon={isLiked ? SolidHeart : faHeart}
@@ -158,10 +158,11 @@ Photo.propTypes = {
     avatar: PropTypes.string,
     username: PropTypes.string.isRequired,
   }),
+  caption: PropTypes.string,
   file: PropTypes.string.isRequired,
   isLiked: PropTypes.bool.isRequired,
   likes: PropTypes.number.isRequired,
-  caption: PropTypes.string,
   commentNumber: PropTypes.number.isRequired,
 };
+
 export default Photo;

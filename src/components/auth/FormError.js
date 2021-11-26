@@ -8,7 +8,10 @@ const StyledFormError = styled.span`
 `;
 
 const FormError = ({ message }) => {
-  return (message === "" || !message) ? null : <StyledFormError>{message}</StyledFormError>;
+  // In case error message does not exist, return null to eliminate dead space occupied by the component
+  return message === "" || !message ? null : (
+    <StyledFormError>{message}</StyledFormError>
+  );
 };
 
 export default FormError;

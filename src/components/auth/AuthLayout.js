@@ -7,14 +7,13 @@ import { darkModeVar, disableDarkMode, enableDarkMode } from "../../Apollo";
 const Container = styled.div`
   display: flex;
   height: 100vh;
-  /* width: 300px; */
   justify-content: center;
   align-items: center;
   flex-direction: column;
 `;
 
 const Wrapper = styled.div`
-  max-width: 400px;
+  max-width: 350px;
   width: 100%;
 `;
 
@@ -22,8 +21,7 @@ const Footer = styled.footer`
   margin-top: 15px;
 `;
 
-const DarkModeBtn = styled.span`
-`;
+const DarkModeBtn = styled.span``;
 
 function AuthLayout({ children }) {
   const darkMode = useReactiveVar(darkModeVar);

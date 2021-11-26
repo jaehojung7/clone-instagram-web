@@ -7,6 +7,7 @@ import {
 import { setContext } from "@apollo/client/link/context";
 
 const TOKEN = "TOKEN";
+
 const DARK_MODE = "DARK_MODE";
 
 export const isLoggedInVar = makeVar(Boolean(localStorage.getItem(TOKEN)));
@@ -16,9 +17,10 @@ export const logUserIn = (token) => {
   isLoggedInVar(true);
 };
 
-export const logUserOut = () => {
+export const logUserOut = (token) => {
   localStorage.removeItem(TOKEN);
-  window.location.reload();
+  isLoggedInVar(false);
+  // window.location.reload();
 };
 
 export const darkModeVar = makeVar(Boolean(localStorage.getItem(DARK_MODE)));
@@ -33,10 +35,13 @@ export const disableDarkMode = () => {
   darkModeVar(false);
 };
 
+// Create link that allows us to send token information to backend
 const httpLink = createHttpLink({
   uri: "http://localhost:4000/graphql",
 });
 
+// authLink defines the headers of every request that the client sends
+// In this case, we add token to the existing headers
 const authLink = setContext((_, { headers }) => {
   return {
     headers: {
