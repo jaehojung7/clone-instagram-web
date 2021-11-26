@@ -2,7 +2,6 @@ import { gql, useQuery } from "@apollo/client";
 import Photo from "../components/feed/Photo";
 import PageTitle from "../components/PageTitle";
 
-// typeDefs + resolvers ? 확인
 const FEED_QUERY = gql`
   query seeFeed {
     seeFeed {

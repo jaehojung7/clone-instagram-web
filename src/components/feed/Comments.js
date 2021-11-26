@@ -6,8 +6,8 @@ import { gql, useMutation } from "@apollo/client";
 import useUser from "../../hooks/useUser";
 
 const CREATE_COMMENT_MUTATION = gql`
-  mutation createComment($photoId: Int!, $text: String!) {
-    createComment(photoId:$photoId, text:$text) {
+  mutation createComment($photoId: Int!, $payload: String!) {
+    createComment(photoId: $photoId, payload: $payload) {
       ok
       error
       id
@@ -44,8 +44,8 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
   const { data: userData } = useUser();
   const { register, handleSubmit, setValue, getValues } = useForm();
   const createCommentUpdate = (cache, result) => {
-    const { text } = getValues();
-    setValue("text", "");
+    const { payload } = getValues();
+    setValue("payload", "");
     const {
       data: {
         createComment: { ok, id },
@@ -57,31 +57,16 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
         createdAt: Date.now() + "",
         id,
         isMine: true,
-        text,
+        payload,
         user: {
           ...userData.me,
         },
       };
-      const newCacheComment = cache.writeFragment({
-        data: newComment,
-        fragment: gql`
-          fragment Name on Comment {
-            id
-            createdAt
-            isMine
-            text
-            user {
-              username
-              avatar
-            }
-          }
-        `,
-      });
       cache.modify({
         id: `Photo:${photoId}`,
         fields: {
           comments(prev) {
-            return [...prev, newCacheComment];
+            return [...prev, newComment];
           },
           commentNumber(prev) {
             return prev + 1;
@@ -97,20 +82,20 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
     }
   );
   const onValid = (data) => {
-    const { text } = data;
+    const { payload } = data;
     if (loading) {
       return;
     }
     createCommentMutation({
       variables: {
         photoId,
-        text,
+        payload,
       },
     });
   };
   return (
     <CommentsContainer>
-      <Comment author={author} text={caption} />
+      <Comment author={author} payload={caption} />
       <CommentCount>
         {commentNumber === 1 ? "1 comment" : `${commentNumber} comments`}
       </CommentCount>
@@ -118,14 +103,13 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
         <Comment
           key={comment.id}
           author={comment.user.username}
-          text={comment.text}
+          payload={comment.payload}
         />
       ))}
       <PostCommentContainer>
         <form onSubmit={handleSubmit(onValid)}>
           <PostCommentInput
-            // React Hook Form ver.7: <input {...register("name", { required: true })} />
-            {...register("text", { required: true })}
+            {...register("payload", { required: true })}
             type="text"
             placeholder="Write a comment..."
           />
@@ -147,7 +131,7 @@ Comments.propTypes = {
         avatar: PropTypes.string,
         username: PropTypes.string.isRequired,
       }),
-      text: PropTypes.string.isRequired,
+      payload: PropTypes.string.isRequired,
       isMine: PropTypes.bool.isRequired,
       createdAt: PropTypes.string.isRequired,
     })
