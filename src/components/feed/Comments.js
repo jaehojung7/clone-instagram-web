@@ -3,12 +3,14 @@ import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import Comment from "./Comment";
 import { gql, useMutation } from "@apollo/client";
+import useUser from "../../hooks/useUser";
 
 const CREATE_COMMENT_MUTATION = gql`
   mutation createComment($photoId: Int!, $text: String!) {
     createComment(photoId: $photoId, text: $text) {
       ok
       error
+      id
     }
   }
 `;
@@ -25,16 +27,54 @@ const CommentCount = styled.span`
 `;
 
 function Comments({ photoId, author, caption, commentNumber, comments }) {
-  const [createCommentFunction, { loading }] = useMutation(
-    CREATE_COMMENT_MUTATION
+  const { register, handleSubmit, setValue, formState, getValues } = useForm();
+  const { data: userData } = useUser();
+
+  const createCommentUpdate = (cache, result) => {
+    const { text } = getValues();
+    setValue("text", "");
+    const {
+      data: {
+        createComment: { ok, id },
+      },
+    } = result;
+
+    if (ok && userData.me) {
+      const newComment = {
+        createdAt: Date.now(),
+        id,
+        isMine: true,
+        text,
+        user: {
+          ...userData.me,
+        },
+      };
+      cache.modify({
+        id: `Photo:${photoId}`,
+        fields: {
+          comments(prev) {
+            return [...prev, newComment];
+          },
+          commentNumber(prev) {
+            return prev + 1;
+          },
+        },
+      });
+    }
+  };
+  const [createCommentMutation, { loading }] = useMutation(
+    CREATE_COMMENT_MUTATION,
+    {
+      update: createCommentUpdate,
+    }
   );
-  const { register, handleSubmit, setValue, formState } = useForm();
+
   const onSubmitValid = (data) => {
     const { text } = data;
     if (loading) {
       return;
     }
-    createCommentFunction({
+    createCommentMutation({
       variables: {
         photoId,
         text,

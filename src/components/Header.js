@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import { isLoggedInVar } from "../Apollo";
 import { Link } from "react-router-dom";
-import routes from "../Routes";
+import routes from "../routes";
 import useUser from "../hooks/useUser";
 import Avatar from "./Avatar";
 

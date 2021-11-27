@@ -1,4 +1,4 @@
-import routes from "../Routes";
+import routes from "../routes";
 import {
   faFacebookSquare,
   faInstagram,
