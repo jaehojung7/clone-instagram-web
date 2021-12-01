@@ -5,6 +5,7 @@ import { isLoggedInVar, logUserOut } from "../Apollo";
 const ME_QUERY = gql`
   query me {
     me {
+      id
       username
       avatar
     }

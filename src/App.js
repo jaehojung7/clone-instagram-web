@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "./screens/Home";
 import Login from "./screens/Login";
 import SignUp from "./screens/SignUp";
+import Profile from "./screens/Profile";
 import NotFound from "./screens/NotFound";
 import routes from "./routes";
 import { ApolloProvider, useReactiveVar } from "@apollo/client";
@@ -36,6 +37,9 @@ function App() {
                   <SignUp />
                 </Route>
               ) : null}
+              <Route path={`/users/:username`}>
+                <Profile />
+              </Route>
               <Route>
                 <NotFound />
               </Route>

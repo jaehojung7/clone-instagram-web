@@ -1,3 +1,4 @@
+import React from "react";
 import PropTypes from "prop-types";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
@@ -26,9 +27,23 @@ const CommentCount = styled.span`
   font-size: 10px;
 `;
 
+const NewCommentContainer = styled.div`
+  margin-top: 10px;
+  padding-top: 15px;
+  padding-bottom: 10px;
+  border-top: 1px solid ${(props) => props.theme.borderColor};
+`;
+
+const NewCommentInput = styled.input`
+  width: 100%;
+  &::placeholder {
+    font-size: 12px;
+  }
+`;
+
 function Comments({ photoId, author, caption, commentNumber, comments }) {
-  const { register, handleSubmit, setValue, formState, getValues } = useForm();
   const { data: userData } = useUser();
+  const { register, handleSubmit, setValue, formState, getValues } = useForm();
 
   const createCommentUpdate = (cache, result) => {
     const { text } = getValues();
@@ -39,9 +54,10 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
       },
     } = result;
 
-    if (ok && userData.me) {
+    if (ok && userData?.me) {
       const newComment = {
-        createdAt: Date.now(),
+        __typename: "Comment",
+        createdAt: String(Date.now()),
         id,
         isMine: true,
         text,
@@ -49,11 +65,28 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
           ...userData.me,
         },
       };
+
+      const newCommentCache = cache.writeFragement({
+        data: newComment,
+        fragment: gql`
+          fragment newCommentFragment on Comment {
+            id
+            createdAt
+            isMine
+            text
+            user {
+              username
+              avatar
+            }
+          }
+        `,
+      });
+      console.log(newCommentCache)
       cache.modify({
         id: `Photo:${photoId}`,
         fields: {
           comments(prev) {
-            return [...prev, newComment];
+            return [...prev, newCommentCache];
           },
           commentNumber(prev) {
             return prev + 1;
@@ -73,14 +106,13 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
     const { text } = data;
     if (loading) {
       return;
-    }
+    };
     createCommentMutation({
       variables: {
         photoId,
         text,
       },
     });
-    setValue("text", "");
   };
   return (
     <CommentsContainer>
@@ -91,13 +123,16 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
       {comments?.map((comment) => (
         <Comment
           key={comment.id}
+          id={comment.id}
+          photoId={photoId}
           author={comment.user.username}
           text={comment.text}
+          isMine={comment.isMine}
         />
       ))}
-      <div>
+      <NewCommentContainer>
         <form onSubmit={handleSubmit(onSubmitValid)}>
-          <input
+          <NewCommentInput
             {...register("text", {
               required: "Comment cannot be empty.",
             })}
@@ -106,7 +141,7 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
             hasError={Boolean(formState.errors?.text?.message)}
           />
         </form>
-      </div>
+      </NewCommentContainer>
     </CommentsContainer>
   );
 }
