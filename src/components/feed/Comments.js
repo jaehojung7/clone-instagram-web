@@ -1,4 +1,3 @@
-import React from "react";
 import PropTypes from "prop-types";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
@@ -43,8 +42,7 @@ const NewCommentInput = styled.input`
 
 function Comments({ photoId, author, caption, commentNumber, comments }) {
   const { data: userData } = useUser();
-  const { register, handleSubmit, setValue, formState, getValues } = useForm();
-
+  const { register, handleSubmit, setValue, getValues, formState } = useForm();
   const createCommentUpdate = (cache, result) => {
     const { text } = getValues();
     setValue("text", "");
@@ -53,7 +51,6 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
         createComment: { ok, id },
       },
     } = result;
-
     if (ok && userData?.me) {
       const newComment = {
         __typename: "Comment",
@@ -66,7 +63,7 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
         },
       };
 
-      const newCommentCache = cache.writeFragement({
+      const newCommentCache = cache.writeFragment({
         data: newComment,
         fragment: gql`
           fragment newCommentFragment on Comment {
@@ -81,7 +78,7 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
           }
         `,
       });
-      console.log(newCommentCache)
+
       cache.modify({
         id: `Photo:${photoId}`,
         fields: {
@@ -95,19 +92,18 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
       });
     }
   };
-  const [createCommentMutation, { loading }] = useMutation(
+  const [createCommentFunction, { loading }] = useMutation(
     CREATE_COMMENT_MUTATION,
     {
       update: createCommentUpdate,
     }
   );
-
   const onSubmitValid = (data) => {
     const { text } = data;
     if (loading) {
       return;
-    };
-    createCommentMutation({
+    }
+    createCommentFunction({
       variables: {
         photoId,
         text,
